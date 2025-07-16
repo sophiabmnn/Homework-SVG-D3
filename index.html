@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SVG with D3</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="custom.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  </head>
+  <body>
+    <h1>Cats Are Even More Tired Than You</h1>
+    <p>The average cat <span style="color:grey;font-weight: bold;"> sleeps twice as much </span> as the average human.</p>
+    <div id="my-svg-chart"></div>
+
+    <script>
+      // Step 3. add data variables
+      const cats = 14,
+            humans = 7,
+            hours = 24;
+
+      // Step 4. transform data into usable scales
+      const scaleRadius = d3.scaleSqrt().domain([0, hours]).range([0, 100]);
+
+      // Step 5. create an SVG container
+      const myChart = d3.select('#my-svg-chart')
+        .append('svg')
+        .attr('width', 1000)
+        .attr('height', 1000);
+
+      const pie = d3.pie()
+      .startAngle(0)
+      .endAngle(2 * Math.PI)
+      .sort(null);
+
+      const arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(150); 
+
+      const CatsPieData = pie([cats, hours - cats]);
+      const HumansPieData = pie([humans, hours - humans]);
+
+      const pies = myChart.append('g')
+        .attr('transform', 'translate(0,0)');
+
+      pies.append('g')
+        .attr('transform', 'translate(300, 200)')
+        .selectAll('path')
+        .data(CatsPieData)
+        .join('path')
+        .attr('d', arc)
+        .attr('fill', (d, i) => i === 0 ? 'grey' : '#eee')
+        .attr('stroke', '#333');
+
+      pies.append('g')
+        .attr('transform', 'translate(700, 200)') 
+        .selectAll('path')
+        .data(HumansPieData)
+        .join('path')
+        .attr('d', arc)
+        .attr('fill', (d, i) => i === 0 ? 'grey' : '#eee')
+        .attr('stroke', '#333');
+
+      // Step 9. Add labels
+      myChart.append('text')
+        .attr('x', 300)
+        .attr('y', 420)
+        .text('Average Cat: 14 Hours of Sleep')
+        .style('text-anchor','middle');
+
+      myChart.append('text')
+        .attr('x', 700)
+        .attr('y', 420)
+        .text('Average Human: 7 Hours of Sleep')
+        .style('text-anchor','middle');
+    </script>
+  </body>
+</html>
